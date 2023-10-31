@@ -10,8 +10,12 @@ from fondant.pipeline import ComponentOp, Pipeline
 
 logger = logging.getLogger(__name__)
 # General configs
-pipeline_name = "controlnet-pipeline"
-pipeline_description = "Pipeline that collects data to train ControlNet"
+
+pipeline = Pipeline(
+    pipeline_name="controlnet-pipeline",
+    pipeline_description="Pipeline that collects data to train ControlNet",
+    base_path="./data-dir"
+)
 
 HF_USER = # Insert your huggingface username here
 HF_TOKEN = # Insert your HuggingFace token here
@@ -19,8 +23,9 @@ HF_TOKEN = # Insert your HuggingFace token here
 # Define component ops
 generate_prompts_op = ComponentOp(
     component_dir="components/generate_prompts",
-    arguments={"n_rows_to_load": None},
+    arguments={"n_rows_to_load": 10},
 )
+
 laion_retrieval_op = ComponentOp.from_registry(
     name="prompt_based_laion_retrieval",
     arguments={
@@ -71,8 +76,7 @@ write_to_hub_controlnet = ComponentOp(
     },
 )
 
-pipeline = Pipeline(pipeline_name=pipeline_name, base_path=PipelineConfigs.BASE_PATH)
-
+# Construct your pipeline
 pipeline.add_op(generate_prompts_op)
 pipeline.add_op(laion_retrieval_op, dependencies=generate_prompts_op)
 pipeline.add_op(download_images_op, dependencies=laion_retrieval_op)
