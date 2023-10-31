@@ -1,29 +1,32 @@
 """Pipeline used to create a stable diffusion dataset from a set of initial prompts."""
 import logging
-import sys
-
-sys.path.append("../")
-
-from pipeline_configs import PipelineConfigs
+import fsspec
+from pathlib import Path
 
 from fondant.pipeline import ComponentOp, Pipeline
 
 logger = logging.getLogger(__name__)
+
 # General configs
+HF_USER =  # Insert your huggingface username here
+HF_TOKEN =  # Insert your HuggingFace token here
+BASE_PATH = "./data_dir"
+N_ROWS_TO_LOAD = 10  # Set to None to load all rows
+
+# Create data directory if it doesn't exist and if it's a local path
+if fsspec.core.url_to_fs(BASE_PATH)[0].protocol == ('file', 'local'):
+    Path(BASE_PATH).mkdir(parents=True, exist_ok=True)
 
 pipeline = Pipeline(
     pipeline_name="controlnet-pipeline",
     pipeline_description="Pipeline that collects data to train ControlNet",
-    base_path="./data-dir"
+    base_path=BASE_PATH
 )
-
-HF_USER = # Insert your huggingface username here
-HF_TOKEN = # Insert your HuggingFace token here
 
 # Define component ops
 generate_prompts_op = ComponentOp(
     component_dir="components/generate_prompts",
-    arguments={"n_rows_to_load": 10},
+    arguments={"n_rows_to_load": N_ROWS_TO_LOAD},
 )
 
 laion_retrieval_op = ComponentOp.from_registry(
@@ -70,8 +73,8 @@ write_to_hub_controlnet = ComponentOp(
     component_dir="components/write_to_hub_controlnet",
     arguments={
         "username": HF_USER,
-        "dataset_name": "segmentation_kfp",
         "hf_token": HF_TOKEN,
+        "dataset_name": "segmentation_kfp",
         "image_column_names": ["images_data"],
     },
 )
