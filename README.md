@@ -7,23 +7,6 @@
 <p align="center">
 </p>
 
-
-# Table of Contents
-1. [Introduction](#introduction)
-    1. [What is Controlnet?](#what-is-controlnet)
-    2. [Multi-Modal dataset](#multi-modal-dataset)
-    3. [LAION-5B](#laion-5b)
-    4. [How to use ControlNet](#how-to-use-controlnet)
-    5. [Examples](#examples)
-2. [Pipeline Overview](#pipeline-overview)
-    1. [Prompt Generation](#prompt-generation)
-    2. [Image URL Retrieval](#image-url-retrieval)
-    3. [Download Images](#download-images)
-    4. [Add Captions](#add-captions)
-    5. [Add Segmentation Maps](#add-segmentation-maps)
-3. [Install and Run](#install-and-run)
-4. [Reusing this pipeline](#reusing-this-pipeline)
-
 ## Introduction
 This example demonstrates an end-to-end fondant pipeline to collect and process data for the fine-tuning of a [ControlNet](https://github.com/lllyasviel/ControlNet) model, focusing on images related to interior design.
 
