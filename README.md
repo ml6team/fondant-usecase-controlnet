@@ -146,10 +146,10 @@ Both of these need to be set to suitable values.
 
 **Prerequisite:**
 
-Ensure that you have Python installed on your system. This data pipeline requires Python version 3.8
-to 3.10.
-Docker is necessary to run the pipeline and you need to have a GPU configured to run the GPU based component. Ensure that Docker is
-installed and configured on your system.
+- Ensure Python version 3.8 to 3.10 is installed on your system.
+- Install and configure Docker on your system.
+- Configure a GPU for running the GPU-based component of the pipeline.
+- 
 
 Follow these steps to get started and running the Fondant pipeline on your local machine.
 
@@ -172,7 +172,7 @@ Afterwards, you can install all needed requirements:
 pip install -r requirements.txt
 ```
 
-Please confirm that Fondant has been installed correctly on your system by executing the following
+You can confirm that Fondant has been installed correctly on your system by executing the following
 command:
 
 ```shell
