@@ -53,8 +53,8 @@ There are 5 components in total, these are:
 
 - Ensure Python version 3.8 to 3.10 is installed on your system.
 - Install and configure Docker on your system.
-- Configure a GPU for running the GPU-based component of the pipeline.
-- 
+- Ensure that you have a GPU for running the GPU-based component of the pipeline.
+
 
 Follow these steps to get started and running the Fondant pipeline on your local machine.
 
@@ -97,6 +97,8 @@ Fondant provides various runners to execute the pipeline in different environmen
 run the pipeline in a production environment, you can utilize, for example,
 the [Vertex AI runner](https://fondant.ai/en/latest/pipeline/#vertex-runner).
 
+NOTE: The public clip service can only handle a few requets at a time, if you run into [timeout issues](https://github.com/rom1504/clip-retrieval/issues/267) t
+hen you might want to host your own clip service following this [guide](https://github.com/rom1504/clip-retrieval/blob/main/docs/laion5B_h14_back.md)
 ## Reusing this pipeline
 
 Adapt this pipeline for your own use case is simply a matter of editing the generate_prompts [component](./components/generate_prompts/src/main.py). You can leverage the existing structure, but generate prompts covering a different domain.

@@ -74,7 +74,7 @@ write_to_hub_controlnet = ComponentOp(
     arguments={
         "username": HF_USER,
         "hf_token": HF_TOKEN,
-        "dataset_name": "segmentation_kfp",
+        "dataset_name": "controlnet-interior-design",
         "image_column_names": ["images_data"],
     },
 )

@@ -1,6 +1,6 @@
 name: Write to hub
 description: Component that writes a dataset to the hub
-image: fndnt/write_to_hf_hub:latest
+image: fndnt/write_to_hf_hub:0.6.2
 
 consumes:
   images:
