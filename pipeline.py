@@ -8,8 +8,8 @@ from fondant.pipeline import ComponentOp, Pipeline
 logger = logging.getLogger(__name__)
 
 # General configs
-HF_USER =  # Insert your huggingface username here
-HF_TOKEN =  # Insert your HuggingFace token here
+HF_USER = None  # Insert your huggingface username here
+HF_TOKEN = None  # Insert your HuggingFace token here
 BASE_PATH = "./data_dir"
 N_ROWS_TO_LOAD = 10  # Set to None to load all rows
 
@@ -69,20 +69,23 @@ segment_images_op = ComponentOp.from_registry(
     accelerator_name="GPU",
 )
 
-write_to_hub_controlnet = ComponentOp(
-    component_dir="components/write_to_hub_controlnet",
-    arguments={
-        "username": HF_USER,
-        "hf_token": HF_TOKEN,
-        "dataset_name": "controlnet-interior-design",
-        "image_column_names": ["images_data"],
-    },
-)
-
 # Construct your pipeline
 pipeline.add_op(generate_prompts_op)
 pipeline.add_op(laion_retrieval_op, dependencies=generate_prompts_op)
 pipeline.add_op(download_images_op, dependencies=laion_retrieval_op)
 pipeline.add_op(caption_images_op, dependencies=download_images_op)
 pipeline.add_op(segment_images_op, dependencies=caption_images_op)
-pipeline.add_op(write_to_hub_controlnet, dependencies=segment_images_op)
+
+
+# Add write to hub component if HF_USER and HF_TOKEN are set
+if HF_USER and HF_TOKEN:
+    write_to_hub_controlnet = ComponentOp(
+        component_dir="components/write_to_hub_controlnet",
+        arguments={
+            "username": HF_USER,
+            "dataset_name": "segmentation_kfp",
+            "hf_token": HF_TOKEN,
+            "image_column_names": ["images_data"],
+        },
+    )
+    pipeline.add_op(write_to_hub_controlnet, dependencies=segment_images_op)
