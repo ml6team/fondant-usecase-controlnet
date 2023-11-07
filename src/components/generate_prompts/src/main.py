@@ -1,5 +1,6 @@
 """
-This component generates a set of initial prompts that will be used to retrieve images from the LAION-5B dataset.
+This component generates a set of initial prompts that will be used to retrieve images
+from the LAION-5B dataset.
 """
 import itertools
 import logging
@@ -9,7 +10,6 @@ import dask.dataframe as dd
 import pandas as pd
 
 from fondant.component import DaskLoadComponent
-from fondant.executor import DaskLoadExecutor
 
 logger = logging.getLogger(__name__)
 
@@ -99,12 +99,12 @@ def make_interior_prompt(room: str, prefix: str, style: str) -> str:
 class GeneratePromptsComponent(DaskLoadComponent):
     def __init__(self, *args, n_rows_to_load: t.Optional[int]) -> None:
         """
-        Generate a set of initial prompts that will be used to retrieve images from the LAION-5B
-        dataset.
+        Generate a set of initial prompts that will be used to retrieve images from the
+        LAION-5B dataset.
 
         Args:
-            n_rows_to_load: Optional argument that defines the number of rows to load. Useful for
-             testing pipeline runs on a small scale
+            n_rows_to_load: Optional argument that defines the number of rows to load.
+                Useful for testing pipeline runs on a small scale
         """
         self.n_rows_to_load = n_rows_to_load
 
