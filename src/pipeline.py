@@ -1,34 +1,29 @@
 """Pipeline used to create a stable diffusion dataset from a set of initial prompts."""
 import logging
-import fsspec
 from pathlib import Path
 
 from fondant.pipeline import ComponentOp, Pipeline
 
 logger = logging.getLogger(__name__)
 
-# General configs
-HF_USER = None  # Insert your huggingface username here
-HF_TOKEN = None  # Insert your HuggingFace token here
 BASE_PATH = "./data_dir"
-N_ROWS_TO_LOAD = 10  # Set to None to load all rows
+# Create data directory if it doesn't exist
+Path(BASE_PATH).mkdir(parents=True, exist_ok=True)
 
-# Create data directory if it doesn't exist and if it's a local path
-if fsspec.core.url_to_fs(BASE_PATH)[0].protocol == ("file", "local"):
-    Path(BASE_PATH).mkdir(parents=True, exist_ok=True)
-
+# Create your pipeline
 pipeline = Pipeline(
     pipeline_name="controlnet-pipeline",
     pipeline_description="Pipeline that collects data to train ControlNet",
     base_path=BASE_PATH,
 )
 
-# Define component ops
+# Create a component operation from a local directory (custom component)
 generate_prompts_op = ComponentOp(
     component_dir="components/generate_prompts",
-    arguments={"n_rows_to_load": N_ROWS_TO_LOAD},
+    arguments={"n_rows_to_load": 10},
 )
 
+# Create component operations from the Fondant Hub (reusable components)
 laion_retrieval_op = ComponentOp.from_registry(
     name="prompt_based_laion_retrieval",
     arguments={
@@ -69,15 +64,16 @@ segment_images_op = ComponentOp.from_registry(
     accelerator_name="GPU",
 )
 
-# Construct your pipeline
+# Add the component operations to your pipeline and define the dependencies
 pipeline.add_op(generate_prompts_op)
 pipeline.add_op(laion_retrieval_op, dependencies=generate_prompts_op)
 pipeline.add_op(download_images_op, dependencies=laion_retrieval_op)
 pipeline.add_op(caption_images_op, dependencies=download_images_op)
 pipeline.add_op(segment_images_op, dependencies=caption_images_op)
 
-
-# Add write to hub component if HF_USER and HF_TOKEN are set
+# OPTIONAL: writing the dataset to the Hugging Face Hub
+HF_USER = None  # Insert your huggingface username here
+HF_TOKEN = None  # Insert your HuggingFace token here
 if HF_USER and HF_TOKEN:
     write_to_hub_controlnet = ComponentOp(
         component_dir="components/write_to_hub_controlnet",
