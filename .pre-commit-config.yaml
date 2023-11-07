@@ -1,0 +1,44 @@
+ci:
+  autoupdate_branch: "main"
+  autoupdate_schedule: monthly
+repos:
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: 'v0.0.264'
+    hooks:
+      - id: ruff
+        files:  |
+            (?x)^(
+                src/.*|
+            )$
+        args: [
+          "--target-version=py38",
+          "--fix",
+          "--exit-non-zero-on-fix",
+        ]
+
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.4
+    hooks:
+      - id: bandit
+        name: bandit
+        args: [
+          "-r",
+          "./src/*"
+        ]
+
+  - repo: https://github.com/psf/black
+    rev: 23.1.0
+    hooks:
+      - id: black
+        name: black
+        files:  |
+            (?x)^(
+                src/.*|
+            )$
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.2.0
+    hooks:
+      - id: mypy
+        args: ["--ignore-missing-imports", "src"]
+        pass_filenames: false
