@@ -14,13 +14,13 @@ BASE_PATH = "./data_dir"
 N_ROWS_TO_LOAD = 10  # Set to None to load all rows
 
 # Create data directory if it doesn't exist and if it's a local path
-if fsspec.core.url_to_fs(BASE_PATH)[0].protocol == ('file', 'local'):
+if fsspec.core.url_to_fs(BASE_PATH)[0].protocol == ("file", "local"):
     Path(BASE_PATH).mkdir(parents=True, exist_ok=True)
 
 pipeline = Pipeline(
     pipeline_name="controlnet-pipeline",
     pipeline_description="Pipeline that collects data to train ControlNet",
-    base_path=BASE_PATH
+    base_path=BASE_PATH,
 )
 
 # Define component ops
