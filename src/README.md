@@ -47,7 +47,7 @@ For more details on the pipeline creation, you can have a look at the
 
 ## Running the pipeline
 
-This pipeline will generate prompts, retrieve matching images in the laion dataset, download then 
+This pipeline will generate prompts, retrieve urls of matching images in the laion dataset, download them 
 and generate corresponding captions and segmentations. If you added the optional `write_to_hf_hub` 
 component, it will write the resulting dataset to the HF hub.
 
@@ -56,7 +56,7 @@ Fondant provides multiple runners to run our pipeline:
 - A Vertex AI runner for managed execution on Google Cloud
 - A Kubeflow Pipelines runner for execution anywhere
 
-Here we will use the local runner, which utilizes docker-compose under the hood.
+Here we will use the local runner, which utilizes Docker compose under the hood.
 
 The runner will first build the custom component and download the reusable components from the 
 component hub. Afterwards, you will see the components execute one by one.
