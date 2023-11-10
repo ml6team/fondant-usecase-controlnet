@@ -1,8 +1,8 @@
 name: Write to hub
 description: Component that writes a dataset to the hub
-image: fndnt/write_to_hf_hub:0.6.2
+image: fndnt/write_to_hf_hub:0.6.2  # We use a docker image from the Fondant Hub instead of implementing our own.
 
-consumes:
+consumes:  # We fill in our data schema here. The component will write this data to the Hugging Face Hub.
   images:
     fields:
       data:
@@ -18,7 +18,7 @@ consumes:
       data:
         type: binary
 
-args:
+args:  # We repeat the arguments from the original `fondant_component.yaml`
   hf_token:
     description: The hugging face token used to write to the hub
     type: str
