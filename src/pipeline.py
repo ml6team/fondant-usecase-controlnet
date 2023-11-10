@@ -20,7 +20,7 @@ pipeline = Pipeline(
 # Create a component operation from a local directory (custom component)
 generate_prompts_op = ComponentOp(
     component_dir="components/generate_prompts",
-    arguments={"n_rows_to_load": 10},
+    arguments={"n_rows_to_load": 10}, # Set to 10 for small scale testing, set to None to load all rows
 )
 
 # Create component operations from the Fondant Hub (reusable components)
