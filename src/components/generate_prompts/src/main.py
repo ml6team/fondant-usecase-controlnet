@@ -95,9 +95,9 @@ def make_interior_prompt(room: str, prefix: str, style: str) -> str:
     """
     return f"{prefix.lower()} {room.lower()}, {style.lower()} interior design"
 
-
+    
 class GeneratePromptsComponent(DaskLoadComponent):
-    def __init__(self, *args, n_rows_to_load: t.Optional[int]) -> None:
+    def __init__(self, *, n_rows_to_load: t.Optional[int], **kwargs) -> None:
         """
         Generate a set of initial prompts that will be used to retrieve images from the
         LAION-5B dataset.
@@ -112,8 +112,11 @@ class GeneratePromptsComponent(DaskLoadComponent):
         room_tuples = itertools.product(rooms, interior_prefix, interior_styles)
         prompts = map(lambda x: make_interior_prompt(*x), room_tuples)
 
-        pandas_df = pd.DataFrame(prompts, columns=["prompts_text"])
+        pandas_df = pd.DataFrame(prompts, columns=["prompt"])
+        pandas_df['id'] = range(1, len(pandas_df) + 1)
 
+        for row in pandas_df.itertuples():
+            logger.info(f"row: {row}")
         if self.n_rows_to_load:
             pandas_df = pandas_df.head(self.n_rows_to_load)
 
