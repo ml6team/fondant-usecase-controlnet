@@ -1,0 +1,208 @@
+name: controlnet-pipeline
+services:
+  download_images:
+    command:
+    - --metadata
+    - '{"base_path": "/data_dir", "pipeline_name": "controlnet-pipeline", "run_id":
+      "controlnet-pipeline-20231214112126", "component_id": "download_images", "cache_key":
+      "7c0eae3bc0ad0738cf69857916a18e46"}'
+    - --output_manifest_path
+    - /data_dir/controlnet-pipeline/controlnet-pipeline-20231214112126/download_images/manifest.json
+    - --timeout
+    - '1'
+    - --retries
+    - '0'
+    - --image_size
+    - '512'
+    - --resize_mode
+    - center_crop
+    - --resize_only_if_bigger
+    - 'False'
+    - --min_image_size
+    - '0'
+    - --max_aspect_ratio
+    - '2.5'
+    - --cache
+    - 'True'
+    - --cluster_type
+    - default
+    - --consumes
+    - '{}'
+    - --produces
+    - '{}'
+    - --component_spec
+    - '{"name": "Download images", "description": "Component that downloads images
+      from a list of URLs.\n\nThis component takes in image URLs as input and downloads
+      the images, along with some metadata \n(like their height and width). The images
+      are stored in a new colum as bytes objects. This \ncomponent also resizes the
+      images using the \n[resizer](https://github.com/rom1504/img2dataset/blob/main/img2dataset/resizer.py)
+      function \nfrom the img2dataset library.\n", "image": "fndnt/download_images:0.8.dev5",
+      "tags": ["Image processing"], "consumes": {"image_url": {"type": "string"}},
+      "produces": {"image": {"type": "binary"}, "image_width": {"type": "int32"},
+      "image_height": {"type": "int32"}}, "args": {"timeout": {"description": "Maximum
+      time (in seconds) to wait when trying to download an image,", "type": "int",
+      "default": 10}, "retries": {"description": "Number of times to retry downloading
+      an image if it fails.", "type": "int", "default": 0}, "n_connections": {"description":
+      "Number of concurrent connections opened per process. Decrease this number if
+      you are running \ninto timeout errors. A lower number of connections can increase
+      the success rate but lower \nthe throughput.\n", "type": "int", "default": 100},
+      "image_size": {"description": "Size of the images after resizing.", "type":
+      "int", "default": 256}, "resize_mode": {"description": "Resize mode to use.
+      One of \"no\", \"keep_ratio\", \"center_crop\", \"border\".", "type": "str",
+      "default": "border"}, "resize_only_if_bigger": {"description": "If True, resize
+      only if image is bigger than image_size.", "type": "bool", "default": false},
+      "min_image_size": {"description": "Minimum size of the images.", "type": "int",
+      "default": 0}, "max_aspect_ratio": {"description": "Maximum aspect ratio of
+      the images.", "type": "float", "default": 99.9}}}'
+    - --input_manifest_path
+    - /data_dir/controlnet-pipeline/controlnet-pipeline-20231214112126/prompt_based_laion_retrieval/manifest.json
+    depends_on:
+      prompt_based_laion_retrieval:
+        condition: service_completed_successfully
+    image: fndnt/download_images:0.8.dev5
+    labels:
+      pipeline_description: Pipeline that collects data to train ControlNet
+    ports:
+    - 8787:8787
+    volumes:
+    - source: /Users/georgeslorre/ML6/internal/fondant-usecase-controlnet/src/data_dir
+      target: /data_dir
+      type: bind
+  generate_prompts:
+    build:
+      args: []
+      context: /Users/georgeslorre/ML6/internal/fondant-usecase-controlnet/src/components/generate_prompts
+    command:
+    - --metadata
+    - '{"base_path": "/data_dir", "pipeline_name": "controlnet-pipeline", "run_id":
+      "controlnet-pipeline-20231214112126", "component_id": "generate_prompts", "cache_key":
+      "cbe3b17f3f435cff83f008fe35d69dbf"}'
+    - --output_manifest_path
+    - /data_dir/controlnet-pipeline/controlnet-pipeline-20231214112126/generate_prompts/manifest.json
+    - --n_rows_to_load
+    - '10'
+    - --cache
+    - 'True'
+    - --cluster_type
+    - default
+    - --consumes
+    - '{}'
+    - --produces
+    - '{}'
+    - --component_spec
+    - '{"name": "Generate prompts", "description": "Component that generates a set
+      of seed prompts", "image": "needs_to_be_build", "produces": {"prompt": {"type":
+      "string"}}, "args": {"n_rows_to_load": {"description": "Optional argument that
+      defines the number of rows to load. Useful for testing pipeline runs on a small
+      scale", "type": "int", "default": "None"}}}'
+    depends_on: {}
+    labels:
+      pipeline_description: Pipeline that collects data to train ControlNet
+    ports:
+    - 8787:8787
+    volumes:
+    - source: /Users/georgeslorre/ML6/internal/fondant-usecase-controlnet/src/data_dir
+      target: /data_dir
+      type: bind
+  prompt_based_laion_retrieval:
+    command:
+    - --metadata
+    - '{"base_path": "/data_dir", "pipeline_name": "controlnet-pipeline", "run_id":
+      "controlnet-pipeline-20231214112126", "component_id": "prompt_based_laion_retrieval",
+      "cache_key": "94554a231683e92fd7465e30424d3a6f"}'
+    - --output_manifest_path
+    - /data_dir/controlnet-pipeline/controlnet-pipeline-20231214112126/prompt_based_laion_retrieval/manifest.json
+    - --num_images
+    - '2'
+    - --aesthetic_score
+    - '9'
+    - --aesthetic_weight
+    - '0.5'
+    - --cache
+    - 'True'
+    - --cluster_type
+    - default
+    - --consumes
+    - '{}'
+    - --produces
+    - '{}'
+    - --component_spec
+    - '{"name": "Prompt based LAION retrieval", "description": "This component retrieves
+      image URLs from the [LAION-5B dataset](https://laion.ai/blog/laion-5b/) \nbased
+      on text prompts. The retrieval itself is done based on CLIP embeddings similarity
+      between \nthe prompt sentences and the captions in the LAION dataset. \n\nThis
+      component doesn\u2019t return the actual images, only URLs.\n", "image": "fndnt/retrieve_laion_by_prompt:0.8.dev5",
+      "tags": ["Data retrieval"], "consumes": {"prompt": {"type": "string"}}, "produces":
+      {"image_url": {"type": "string"}, "prompt_id": {"type": "string"}}, "previous_index":
+      "prompt_id", "args": {"num_images": {"description": "Number of images to retrieve
+      for each prompt", "type": "int"}, "aesthetic_score": {"description": "Aesthetic
+      embedding to add to the query embedding, between 0 and 9 (higher is prettier).",
+      "type": "int", "default": 9}, "aesthetic_weight": {"description": "Weight of
+      the aesthetic embedding when added to the query, between 0 and 1", "type": "float",
+      "default": 0.5}, "url": {"description": "The url of the backend clip retrieval
+      service, defaults to the public service", "type": "str", "default": "https://knn.laion.ai/knn-service"}}}'
+    - --input_manifest_path
+    - /data_dir/controlnet-pipeline/controlnet-pipeline-20231214112126/generate_prompts/manifest.json
+    depends_on:
+      generate_prompts:
+        condition: service_completed_successfully
+    image: fndnt/retrieve_laion_by_prompt:0.8.dev5
+    labels:
+      pipeline_description: Pipeline that collects data to train ControlNet
+    ports:
+    - 8787:8787
+    volumes:
+    - source: /Users/georgeslorre/ML6/internal/fondant-usecase-controlnet/src/data_dir
+      target: /data_dir
+      type: bind
+  write_to_hub:
+    command:
+    - --metadata
+    - '{"base_path": "/data_dir", "pipeline_name": "controlnet-pipeline", "run_id":
+      "controlnet-pipeline-20231214112126", "component_id": "write_to_hub", "cache_key":
+      "3c81cc329b654b7ade7b63a825be22d5"}'
+    - --output_manifest_path
+    - /data_dir/controlnet-pipeline/controlnet-pipeline-20231214112126/write_to_hub/manifest.json
+    - --username
+    - GLorr
+    - --dataset_name
+    - fondant-controlnet-dataset
+    - --hf_token
+    - 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
+    - --image_column_names
+    - '["image"]'
+    - --cache
+    - 'True'
+    - --cluster_type
+    - default
+    - --consumes
+    - '{"image": {"type": "binary"}, "image_width": {"type": "int32"}, "image_height":
+      {"type": "int32"}}'
+    - --produces
+    - '{}'
+    - --component_spec
+    - '{"name": "Write to hub", "description": "Component that writes a dataset to
+      the hub", "image": "fndnt/write_to_hf_hub:0.8.dev5", "tags": ["Data writing"],
+      "consumes": {"additionalProperties": true}, "args": {"hf_token": {"description":
+      "The hugging face token used to write to the hub", "type": "str"}, "username":
+      {"description": "The username under which to upload the dataset", "type": "str"},
+      "dataset_name": {"description": "The name of the dataset to upload", "type":
+      "str"}, "image_column_names": {"description": "A list containing the image column
+      names. Used to format to image to HF hub format", "type": "list", "default":
+      []}, "column_name_mapping": {"description": "Mapping of the consumed fondant
+      column names to the written hub column names", "type": "dict", "default": {}}}}'
+    - --input_manifest_path
+    - /data_dir/controlnet-pipeline/controlnet-pipeline-20231214112126/download_images/manifest.json
+    depends_on:
+      download_images:
+        condition: service_completed_successfully
+    image: fndnt/write_to_hf_hub:0.8.dev5
+    labels:
+      pipeline_description: Pipeline that collects data to train ControlNet
+    ports:
+    - 8787:8787
+    volumes:
+    - source: /Users/georgeslorre/ML6/internal/fondant-usecase-controlnet/src/data_dir
+      target: /data_dir
+      type: bind
+version: '3.8'

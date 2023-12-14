@@ -1,1 +1,1 @@
-fondant[aws,azure,gcp, component]==0.8.dev4
+fondant[aws,azure,gcp, component]==0.8.0

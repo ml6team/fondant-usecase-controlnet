@@ -1,2 +1,2 @@
-fondant==0.8.dev4
+fondant==0.8.0
 notebook==7.0.6

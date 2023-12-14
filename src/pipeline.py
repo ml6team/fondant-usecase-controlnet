@@ -1,6 +1,8 @@
 """Pipeline used to create a stable diffusion dataset from a set of initial prompts."""
 from pathlib import Path
 
+import pyarrow as pa
+
 from fondant.pipeline import Pipeline
 
 
@@ -65,19 +67,19 @@ segmentations = captions.apply(
 # OPTIONAL: writing the dataset to the Hugging Face Hub
 HF_USER = None  # Insert your huggingface username here
 HF_TOKEN = None  # Insert your HuggingFace token here
+
 if HF_USER and HF_TOKEN:
-    segmentations.apply(
-        "components/write_to_hub_controlnet",
+    segmentations.write(
+        "write_to_hf_hub",
         arguments={
             "username": HF_USER,
             "dataset_name": "fondant-controlnet-dataset",
             "hf_token": HF_TOKEN,
             "image_column_names": ["image"],
-            "column_name_mapping": {
-                "image": "image",
-                "image_width": "width",
-                "image_height": "height"
-            }
+        },
+        consumes={
+            "image": pa.binary(),
+            "image_width": pa.int32(),
+            "image_height": pa.int32(),
         },
     )
-
