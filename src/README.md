@@ -47,18 +47,15 @@ For more details on the pipeline creation, you can have a look at the
 
 ## Running the pipeline
 
-This pipeline will generate prompts, retrieve urls of matching images in the laion dataset, download them 
+This pipeline will generate prompts, retrieve urls of matching images in the LAION dataset, download them 
 and generate corresponding captions and segmentations. If you added the optional `write_to_hf_hub` 
 component, it will write the resulting dataset to the HF hub.
 
-Fondant provides multiple runners to run our pipeline:
-- A Docker runner for local execution
-- A Vertex AI runner for managed execution on Google Cloud
-- A Kubeflow Pipelines runner for execution anywhere
-
+Fondant provides different runners to run our pipeline.
 Here we will use the local runner, which utilizes Docker compose under the hood.
+For an overview of all runners, check the [Fondant documentation](https://fondant.ai/en/latest/pipeline/#running-a-pipeline).
 
-The runner will first build the custom component and download the reusable components from the 
+The runner will first download the reusable components from the 
 component hub. Afterwards, you will see the components execute one by one.
 
 ```shell
@@ -78,11 +75,13 @@ fondant explore -b data_dir
 To create your own dataset, you can update the generate_prompts component to generate prompts 
 describing the images you want.
 
-Make the changes you in the 
-[./components/generate_prompts/src/main.py](./components/generate_prompts/src/main.py) file.
+The component is implemented as a 
+[lightweight component](https://fondant.ai/en/latest/components/lightweight_components/)
+at [./components/generate_prompts/__init__.py](./components/generate_prompts/__init__.py).
+You can update it to create your own prompts.
 
 If you now re-run your pipeline, the new changes will be picked up and Fondant will automatically 
-re-build the component with the changes included.
+execute the component with the changes included.
 
 ```shell
 fondant run local pipeline.py
@@ -98,5 +97,5 @@ fondant explore -b data_dir
 ## Scaling up
 
 If you're happy with your dataset, it's time to scale up. Check 
-[our documentation](https://fondant.ai/en/latest/pipeline/#compiling-and-running-a-pipeline) for 
+[our documentation](https://fondant.ai/en/latest/components/lightweight_components/) for 
 more information about the available runners.

@@ -2,8 +2,9 @@
 from pathlib import Path
 
 import pyarrow as pa
-
 from fondant.pipeline import Pipeline
+
+from components.generate_prompts import GeneratePromptsComponent
 
 
 BASE_PATH = "./data_dir"
@@ -18,13 +19,13 @@ pipeline = Pipeline(
 )
 
 prompts = pipeline.read(
-    "components/generate_prompts",
+    GeneratePromptsComponent,
     arguments={
         "n_rows_to_load": 10
     },  # Set to 10 for small scale testing, set to None to load all rows
 )
 
-laion_retrieval = prompts.apply(
+image_urls = prompts.apply(
     "retrieve_laion_by_prompt",
     arguments={
         "num_images": 2,
@@ -33,7 +34,7 @@ laion_retrieval = prompts.apply(
     },
 )
 
-images = laion_retrieval.apply(
+images = image_urls.apply(
     "download_images",
     arguments={
         "timeout": 1,
