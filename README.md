@@ -50,7 +50,7 @@ There are 5 components in total, these are:
 
 > ⚠️ **Prerequisites:**
 >
-> - A Python version between 3.8 and 3.10 installed on your system.
+> - A Python version between 3.8 and 3.11 installed on your system.
 > - Docker installed and configured on your system.
 > - A GPU is recommended to run the model-based components of the pipeline.
 

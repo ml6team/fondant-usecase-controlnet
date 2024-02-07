@@ -6,7 +6,8 @@ This example demonstrates an end-to-end fondant pipeline to collect and process 
 
 There are 5 components in total, these are:
 
-1. [**Prompt Generation**](components/generate_prompts): This component generates a set of seed prompts using a rule-based approach that combines various rooms and styles together, like “a photo of a {room_type} in the style of {style_type}”. As input, it takes in a list of room types (bedroom, kitchen, laundry room, ..), a list of room styles (contemporary, minimalist, art deco, ...) and a list of prefixes (comfortable, luxurious, simple). These lists can be easily adapted to other domains. The output of this component is a list of seed prompts.
+1. [**Prompt Generation**](components/generate_prompts.py): This component generates a set of seed 
+   prompts using a rule-based approach that combines various rooms and styles together, like “a photo of a {room_type} in the style of {style_type}”. As input, it takes in a list of room types (bedroom, kitchen, laundry room, ..), a list of room styles (contemporary, minimalist, art deco, ...) and a list of prefixes (comfortable, luxurious, simple). These lists can be easily adapted to other domains. The output of this component is a list of seed prompts.
 
 2. [**Image URL Retrieval**](https://github.com/ml6team/fondant/tree/main/components/prompt_based_laion_retrieval): This component retrieves images from the [LAION-5B](https://laion.ai/blog/laion-5b/) dataset based on the seed prompts. The retrieval itself is done based on CLIP embeddings similarity between the prompt sentences and the captions in the LAION dataset. This component doesn’t return the actual images yet, only the URLs. The next component in the pipeline will then download these images.
 
@@ -15,6 +16,9 @@ There are 5 components in total, these are:
 4. [**Add Captions**](https://github.com/ml6team/fondant/tree/main/components/caption_images): This component captions all images using [BLIP](https://huggingface.co/docs/transformers/model_doc/blip). This model takes in the image and generates a caption that describes the content of the image. This component takes in a Hugging Face model ID, so it can use any [Hugging Face Hub model](https://huggingface.co/models).
 
 5. [**Add Segmentation Maps**](https://github.com/ml6team/fondant/tree/main/components/segment_images): This component segments the images using the [UPerNet](https://huggingface.co/docs/transformers/model_doc/upernet) model. Each segmentation map contains segments of 150 possible categories listed [here](https://huggingface.co/openmmlab/upernet-convnext-small/blob/main/config.json#L110).
+
+6. [**Write to Hugging Face Hub**](https://github.com/ml6team/fondant/tree/main/components/write_to_hf_hub): 
+   Write the results as a dataset to the Hugging Face Hub.
 
 ## Environment
 
@@ -47,18 +51,15 @@ For more details on the pipeline creation, you can have a look at the
 
 ## Running the pipeline
 
-This pipeline will generate prompts, retrieve urls of matching images in the laion dataset, download them 
+This pipeline will generate prompts, retrieve urls of matching images in the LAION dataset, download them 
 and generate corresponding captions and segmentations. If you added the optional `write_to_hf_hub` 
 component, it will write the resulting dataset to the HF hub.
 
-Fondant provides multiple runners to run our pipeline:
-- A Docker runner for local execution
-- A Vertex AI runner for managed execution on Google Cloud
-- A Kubeflow Pipelines runner for execution anywhere
-
+Fondant provides different runners to run our pipeline.
 Here we will use the local runner, which utilizes Docker compose under the hood.
+For an overview of all runners, check the [Fondant documentation](https://fondant.ai/en/latest/pipeline/#running-a-pipeline).
 
-The runner will first build the custom component and download the reusable components from the 
+The runner will first download the reusable components from the 
 component hub. Afterwards, you will see the components execute one by one.
 
 ```shell
@@ -78,11 +79,13 @@ fondant explore -b data_dir
 To create your own dataset, you can update the generate_prompts component to generate prompts 
 describing the images you want.
 
-Make the changes you in the 
-[./components/generate_prompts/src/main.py](./components/generate_prompts/src/main.py) file.
+The component is implemented as a 
+[lightweight component](https://fondant.ai/en/latest/components/lightweight_components/)
+at [./components/generate_prompts/__init__.py](./components/generate_prompts/__init__.py).
+You can update it to create your own prompts.
 
 If you now re-run your pipeline, the new changes will be picked up and Fondant will automatically 
-re-build the component with the changes included.
+execute the component with the changes included.
 
 ```shell
 fondant run local pipeline.py
@@ -98,5 +101,5 @@ fondant explore -b data_dir
 ## Scaling up
 
 If you're happy with your dataset, it's time to scale up. Check 
-[our documentation](https://fondant.ai/en/latest/pipeline/#compiling-and-running-a-pipeline) for 
+[our documentation](https://fondant.ai/en/latest/components/lightweight_components/) for 
 more information about the available runners.
