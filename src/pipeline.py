@@ -26,11 +26,10 @@ prompts = pipeline.read(
 )
 
 image_urls = prompts.apply(
-    "retrieve_laion_by_prompt",
+    "retrieve_images_from_faiss_index",
     arguments={
-        "num_images": 2,
-        "aesthetic_score": 9,
-        "aesthetic_weight": 0.5,
+        "dataset_url": "", # TODO insert dataset url 
+        "num_images": 2
     },
 )
 
