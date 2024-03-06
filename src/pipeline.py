@@ -26,11 +26,11 @@ prompts = pipeline.read(
 )
 
 image_urls = prompts.apply(
-    "retrieve_laion_by_prompt",
+    "retrieve_images_from_faiss_index_by_prompt",
     arguments={
-        "num_images": 2,
-        "aesthetic_score": 9,
-        "aesthetic_weight": 0.5,
+        "url_mapping_path":"gs://soy-audio-379412-embed-datacomp/12M/id_mapping",
+        "faiss_index_path":"gs://soy-audio-379412-embed-datacomp/12M/faiss",
+        "num_images": 2
     },
 )
 
