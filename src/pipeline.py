@@ -26,10 +26,10 @@ prompts = pipeline.read(
 )
 
 image_urls = prompts.apply(
-    "retrieve_images_from_faiss_index_by_prompt",
+    "retrieve_from_faiss_by_prompt",
     arguments={
-        "url_mapping_path":"gs://soy-audio-379412-embed-datacomp/12M/id_mapping",
-        "faiss_index_path":"gs://soy-audio-379412-embed-datacomp/12M/faiss",
+        "url_mapping_path":"hf://datasets/fondant-ai/datacomp-small-clip/id_mapping/id_mapping",
+        "faiss_index_path":"hf://datasets/fondant-ai/datacomp-small-clip/faiss",
         "num_images": 2
     },
 )
