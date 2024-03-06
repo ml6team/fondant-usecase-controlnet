@@ -28,7 +28,7 @@ prompts = pipeline.read(
 image_urls = prompts.apply(
     "retrieve_from_faiss_by_prompt",
     arguments={
-        "url_mapping_path":"hf://datasets/fondant-ai/datacomp-small-clip/id_mapping/id_mapping",
+        "url_mapping_path":"hf://datasets/fondant-ai/datacomp-small-clip/id_mapping",
         "faiss_index_path":"hf://datasets/fondant-ai/datacomp-small-clip/faiss",
         "num_images": 2
     },
