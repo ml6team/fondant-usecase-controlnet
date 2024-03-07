@@ -86,3 +86,12 @@ There are two options to run the pipeline:
 
 - [Via python files and the Fondant CLI](./src/README.md): how you should run Fondant in production
 - [Via a Jupyter notebook](./src/pipeline.ipynb): ideal to learn about Fondant
+
+## Train your own ControlNet model
+
+Apparently, creating data for ControlNet fine-tuning is the most challenging part. However, Huggingface provides an easy way to fine-tune your own ControlNet model using the Diffusers library.
+After publishing your dataset, you can initiate a fine-tuning job and specify the Huggingface dataset you wish to use as training data.
+
+Resources: 
+- [Blog post on how to fine tune your own ControlNet model](https://huggingface.co/blog/train-your-controlnet)
+- [Diffusers library](https://github.com/huggingface/diffusers/tree/main) and [ControlNet training script](https://github.com/huggingface/diffusers/blob/main/examples/controlnet/train_controlnet.py)   
