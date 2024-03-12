@@ -2,8 +2,7 @@
 from pathlib import Path
 
 import pyarrow as pa
-from fondant.pipeline import Pipeline
-
+from fondant.pipeline import Pipeline, Resources
 from components.generate_prompts import GeneratePromptsComponent
 
 
@@ -32,6 +31,7 @@ image_urls = prompts.apply(
         "faiss_index_path": "hf://datasets/fondant-ai/datacomp-small-clip/faiss",
         "num_images": 2,
     },
+    resources=Resources(accelerator_name="GPU", accelerator_number=2)
 )
 
 images = image_urls.apply(
