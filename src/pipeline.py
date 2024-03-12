@@ -1,9 +1,19 @@
 """Pipeline used to create a stable diffusion dataset from a set of initial prompts."""
 from pathlib import Path
-
+import torch
 import pyarrow as pa
 from fondant.pipeline import Pipeline, Resources
+
 from components.generate_prompts import GeneratePromptsComponent
+
+
+def get_local_resources():
+    if torch.cuda.is_available():
+        return Resources(
+            accelerator_name="GPU", accelerator_number=torch.cuda.device_count()
+        )
+    else:
+        return None
 
 
 BASE_PATH = "./data_dir"
@@ -20,7 +30,7 @@ pipeline = Pipeline(
 prompts = pipeline.read(
     GeneratePromptsComponent,
     arguments={
-        "n_rows_to_load": 10
+        "n_rows_to_load": 50
     },  # Set to 10 for small scale testing, set to None to load all rows
 )
 
@@ -31,7 +41,7 @@ image_urls = prompts.apply(
         "faiss_index_path": "hf://datasets/fondant-ai/datacomp-small-clip/faiss",
         "num_images": 2,
     },
-    resources=Resources(accelerator_name="GPU", accelerator_number=2),
+    resources=get_local_resources(),
 )
 
 images = image_urls.apply(
@@ -54,6 +64,7 @@ captions = images.apply(
         "batch_size": 8,
         "max_new_tokens": 50,
     },
+    resources=get_local_resources(),
 )
 
 segmentations = captions.apply(
@@ -62,6 +73,7 @@ segmentations = captions.apply(
         "model_id": "openmmlab/upernet-convnext-small",
         "batch_size": 8,
     },
+    resources=get_local_resources(),
 )
 
 
